@@ -144,7 +144,7 @@
         video.style.objectFit = 'cover';
         video.style.borderRadius = '1rem';
         lightboxMedia.appendChild(video);
-        video.play().catch(e => console.log('Autoplay prevented:', e));
+        video.play().catch(() => {});
       } else if (lightboxMedia && gradient) {
         lightboxMedia.style.background = gradient;
       }
