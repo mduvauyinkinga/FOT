@@ -3,7 +3,7 @@
 A community-driven platform created for students and alumni of **Tshwane University of Technology (TUT)**.  
 This website connects peers, shares resources, and celebrates the vibrant TUT community.
 
----
+----
 
 ## 🚀 Features
 - Community Hub: Stay updated with events, announcements, and opportunities  
