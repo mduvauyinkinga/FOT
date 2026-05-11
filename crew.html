@@ -172,6 +172,11 @@
               <p class="text-muted-foreground" style="font-size:0.875rem;">Media Team</p>
             </div>
             <div class="crew-member">
+              <img class="crew-member-img" src="assets/Media Team/Thendo.jpeg" alt="Thendo - Media Team" loading="lazy" />
+              <h3 class="crew-member-name">Thendo</h3>
+              <p class="text-muted-foreground" style="font-size:0.875rem;">Media Team</p>
+            </div>
+            <div class="crew-member">
               <img class="crew-member-img" src="assets/Media Team/FANADEERSA.jpeg" alt="FANADEERSA - Media Team" loading="lazy" />
               <h3 class="crew-member-name">FANADEERSA</h3>
               <p class="text-muted-foreground" style="font-size:0.875rem;">Media Team</p>
@@ -184,6 +189,11 @@
             <div class="crew-member">
               <img class="crew-member-img" src="assets/Media Team/MellowDoeBoy.jpeg" alt="MellowDoeBoy - Media Team" loading="lazy" />
               <h3 class="crew-member-name">MellowDoeBoy</h3>
+              <p class="text-muted-foreground" style="font-size:0.875rem;">Media Team</p>
+            </div>
+            <div class="crew-member">
+              <img class="crew-member-img" src="assets/Media Team/PRETTY BOUYY.jpeg" alt="PRETTY BOUYY - Media Team" loading="lazy" />
+              <h3 class="crew-member-name">PRETTY BOUYY</h3>
               <p class="text-muted-foreground" style="font-size:0.875rem;">Media Team</p>
             </div>
             <div class="crew-member">
@@ -290,6 +300,11 @@
               <p class="text-muted-foreground" style="font-size:0.875rem;">Ambassador</p>
             </div>
             <div class="crew-member">
+              <img class="crew-member-img" src="assets/Ambassadors/PRETTY_BUDAGI.jpeg" alt="PRETTY BUDAGI - Ambassador" loading="lazy" />
+              <h3 class="crew-member-name">PRETTY BUDAGI</h3>
+              <p class="text-muted-foreground" style="font-size:0.875rem;">Ambassador</p>
+            </div>
+            <div class="crew-member">
               <img class="crew-member-img" src="assets/Ambassadors/SDEEZO.jpeg" alt="SDEEZO - Ambassador" loading="lazy" />
               <h3 class="crew-member-name">SDEEZO</h3>
               <p class="text-muted-foreground" style="font-size:0.875rem;">Ambassador</p>
@@ -354,7 +369,7 @@
           <a href="info.html">Teams</a>
           <a href="terms.html">Terms of Service</a>
           <a href="privacy-policy.html">Privacy Policy</a>
-          <a href="javascript:void(0)" onclick="CookieConsent && CookieConsent.reopenSettings && CookieConsent.reopenSettings()">Cookie Settings</a>
+          <button type="button" class="cookie-settings-btn" aria-label="Open cookie settings" onclick="CookieConsent && CookieConsent.reopenSettings && CookieConsent.reopenSettings()">Cookie Settings</button>
         </div>
       </div>
       <div>
@@ -376,13 +391,33 @@
       </div>
     </div>
     <div class="container footer-bottom">
-      © 2025 - <span id="year"></span> Friends of TUT &amp; KTM TECH. All rights reserved.
+    @<span>2025</span> - <span id="year"></span> Friends of TUT &amp; KTM TECH. All rights reserved.
     </div>
   </footer>
 
   <script src="js/app.min.js"></script>
   <script src="js/cookie-consent.js"></script>
   <script>
+    // Navbar responsiveness (independent fallback)
+    (function () {
+      const mobileToggle = document.getElementById('mobile-toggle');
+      const mobileMenu = document.getElementById('mobile-menu');
+      if (!mobileToggle || !mobileMenu) return;
+
+      mobileMenu.classList.remove('open');
+
+      mobileToggle.addEventListener('click', function (e) {
+        e.preventDefault();
+        mobileMenu.classList.toggle('open');
+      });
+
+      mobileMenu.querySelectorAll('a').forEach(function (a) {
+        a.addEventListener('click', function () {
+          mobileMenu.classList.remove('open');
+        });
+      });
+    })();
+
     var currentYear = new Date().getFullYear();
     document.getElementById('year').textContent = currentYear;
     document.getElementById('terms-year') && (document.getElementById('terms-year').textContent = currentYear);
@@ -391,4 +426,6 @@
   </script>
 </body>
 </html>
+
+
 

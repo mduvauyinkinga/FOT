@@ -135,6 +135,20 @@
               <textarea id="message" name="message" placeholder="Let's hear your feedback." rows="4" required aria-label="Enter your feedback"></textarea>
               <span class="error-message"></span>
             </div>
+
+            <div class="form-group" style="margin-top:1.25rem;">
+              <p style="margin-bottom:.75rem; font-size:.875rem; color:hsl(var(--muted-foreground));">
+                We collect your personal information to respond to your feedback and communicate about Friends of TUT events. For details, see our <a href="privacy-policy.html" style="color:hsl(var(--primary)); text-decoration: underline;">Privacy Policy</a>.
+              </p>
+              <div style="display:flex; gap:.75rem; align-items:flex-start;">
+                <input type="checkbox" id="consent" name="consent" value="yes" required aria-required="true" style="margin-top:.35rem; accent-color:hsl(var(--primary));" />
+                <label for="consent" style="font-size:.875rem; color:hsl(var(--muted-foreground)); line-height:1.5;">
+                  I consent to the processing of my personal information for the purpose of handling this enquiry (POPIA).
+                </label>
+              </div>
+              <span class="error-message" id="consent-error" aria-live="polite"></span>
+            </div>
+
             <div class="honeypot-field" aria-hidden="true" style="position:absolute;left:-9999px;top:-9999px;">
               <label for="website">Website</label>
               <input type="text" id="website" name="website" autocomplete="off" tabindex="-1" />
@@ -178,7 +192,7 @@
           <a href="info.html">Teams</a>
           <a href="terms.html">Terms of Service</a>
           <a href="privacy-policy.html">Privacy Policy</a>
-          <a href="javascript:void(0)" onclick="CookieConsent && CookieConsent.reopenSettings && CookieConsent.reopenSettings()">Cookie Settings</a>
+          <button type="button" class="cookie-settings-btn" aria-label="Open cookie settings" onclick="CookieConsent && CookieConsent.reopenSettings && CookieConsent.reopenSettings()">Cookie Settings</button>
         </div>
       </div>
       <div>
@@ -200,13 +214,33 @@
       </div>
     </div>
     <div class="container footer-bottom">
-      © 2025 - <span id="year"></span> Friends of TUT &amp; KTM TECH. All rights reserved.
+    @<span>2025</span> - <span id="year"></span> Friends of TUT &amp; KTM TECH. All rights reserved.
     </div>
   </footer>
 
   <script src="js/app.min.js"></script>
   <script src="js/cookie-consent.js"></script>
   <script>
+    // Navbar responsiveness (independent fallback)
+    (function () {
+      const mobileToggle = document.getElementById('mobile-toggle');
+      const mobileMenu = document.getElementById('mobile-menu');
+      if (!mobileToggle || !mobileMenu) return;
+
+      mobileMenu.classList.remove('open');
+
+      mobileToggle.addEventListener('click', function (e) {
+        e.preventDefault();
+        mobileMenu.classList.toggle('open');
+      });
+
+      mobileMenu.querySelectorAll('a').forEach(function (a) {
+        a.addEventListener('click', function () {
+          mobileMenu.classList.remove('open');
+        });
+      });
+    })();
+
     var currentYear = new Date().getFullYear();
     document.getElementById('year').textContent = currentYear;
     document.getElementById('terms-year') && (document.getElementById('terms-year').textContent = currentYear);
@@ -215,4 +249,5 @@
   </script>
 </body>
 </html>
+
 

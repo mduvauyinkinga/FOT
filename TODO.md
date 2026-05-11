@@ -1,32 +1,54 @@
-## Multi-page refactor (SPA hash → real pages)
+# TODO (Friends of TUT) — Legal/Compliance/Security Audit
 
-### Step 1 — Extract & create pages
-- [x] Create/Update: `index.html` (Home)
-- [x] Already present: `about.html` (About)
-- [x] Create: `events.html`
-- [x] Create: `gallery.html`
-- [x] Create: `info.html`
-- [x] Create: `crew.html`
-- [x] Create: `privacy-policy.html`
-- [x] Create: `terms.html`
-- [x] Create: `404.html`
+## Step 1 — Cookie policy page
+- [ ] Create `cookies.html` (if not present)
+- [ ] Update footer links on all pages to include **Cookie Policy** (and keep existing Privacy/Terms)
 
+## Step 2 — Privacy Policy (POPIA)
+- [ ] Update `privacy-policy.html` to include stronger POPIA-required disclosures:
+  - [ ] Responsible party + Information Officer details
+  - [ ] Lawful processing basis / purposes aligned to this site
+  - [ ] Cookies & local storage disclosure aligned to actual behavior
+  - [ ] Explicit Firebase disclosure (or removal if not used)
+  - [ ] Clear data retention durations (make defensible)
+  - [ ] User rights and POPIA contact workflow
 
-### Step 2 — Update navigation links
-- [x] Updated: Home/brand/nav + mobile nav + hero CTA links inside `index.html`
-- [ ] Ensure footer quick links on each page point to `*.html`
-- [ ] Ensure cookie banner links/“Cookie Settings” reopening work with new pages
+## Step 3 — Terms & Conditions
+- [ ] Update `terms.html` with required disclaimers:
+  - [ ] Media/photo/event participation consent notices
+  - [ ] External links disclaimer specificity
+  - [ ] Availability disclaimer
 
-### Step 3 — Remove SPA routing logic
-- [x] Converted `index.html` to only include Home content (removed other `#page-*` sections from index)
-- [ ] Ensure `js/app.min.js` does not rely on SPA page-switching (only keep functional handlers: mobile menu, RSVP, form validation, gallery filter/lightbox)
+## Step 4 — Cookie consent system UX + wording
+- [ ] Update `js/cookie-consent.js` to ensure:
+  - [ ] “Cookie Policy” link points to the correct page
+  - [ ] Keyboard/focus behavior (focus first action; close on ESC)
+  - [ ] Consent can be changed/reopened (verify wire-up)
 
-### Step 4 — Verification checklist
-- [ ] Manual navigation test on `index.html` (desktop + mobile)
-  - [ ] Navbar + mobile menu links go to real pages
-- [ ] Verify animations + layout are unchanged on home
-- [ ] Verify gallery/lightbox/buttons still work once their pages exist
+## Step 5 — Add POPIA consent checkbox to contact form
+- [ ] Update `info.html` feedback form:
+  - [ ] Add consent checkbox + label + helper text
+  - [ ] Ensure validation includes consent requirement
+  - [ ] Keep honeypot and existing UI logic intact
 
-### Notes
-- New pages will reuse the same Navbar/Footer/Lightbox markup and scripts.
+## Step 6 — Security hardening (lightweight for GitHub Pages)
+- [ ] Add CSP `<meta http-equiv="Content-Security-Policy" ...>` to all HTML pages
+  - [ ] Ensure CSP does not break inline scripts already used
+
+## Step 7 — Accessibility & external link hygiene
+- [ ] Ensure all `target="_blank"` links include `rel="noopener noreferrer"`
+- [ ] Verify cookie modal is accessible (role/dialog + labels already present)
+
+## Step 8 — Verification
+- [ ] Manual smoke tests (cookie banner; cookie settings reopen; form submit to Formspree)
+- [ ] Re-run regex scan for missing rel/unsafe patterns
+
+## Step 9 — Final deliverable
+- [ ] Produce complete audit output per issue:
+  - [ ] File name
+  - [ ] Line number
+  - [ ] Problem explanation
+  - [ ] LegalAction (risk level)
+  - [ ] Exact corrected code
+  - [ ] Why fix is required
 

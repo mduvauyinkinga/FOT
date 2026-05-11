@@ -86,11 +86,12 @@
 
   // Apply consent - load analytics tools based on consent
   function applyConsent(consent) {
-    if (consent && consent.analytics) {
+    const analyticsAllowed = Boolean(consent && consent.analytics);
+
+    if (analyticsAllowed) {
       loadGoogleAnalytics();
       loadFirebase();
     } else {
-      // Remove analytics scripts if consent withdrawn
       removeGoogleAnalytics();
       removeFirebase();
     }
@@ -98,17 +99,29 @@
 
   // Remove Google Analytics
   function removeGoogleAnalytics() {
-    const script = document.getElementById(GA_CONFIG.scriptId);
-    if (script) {
-      script.remove();
-    }
+    const existing = document.getElementById(GA_CONFIG.scriptId);
+    if (existing) existing.remove();
+
+    // Best-effort: stop future gtag calls and signal opt-out.
     window.dataLayer = window.dataLayer || [];
-    window.dataLayer.push({ 'event': 'analytics_opt_out' });
+    window.dataLayer.push({ event: 'analytics_opt_out' });
+
+    try {
+      // If GA was already initialized, gtag may still exist.
+      // Overwrite with noop to prevent accidental future firing.
+      window.gtag = window.gtag || function () {};
+      window.gtag = function () {};
+    } catch (e) {
+      // ignore
+    }
   }
 
   // Remove Firebase
+  // Note: Firebase analytics uses internal events; we can only prevent re-init reliably.
+  // We also gate all future initialization behind consent.
   function removeFirebase() {
     window.firebaseInitialized = false;
+    window._fotFirebaseAnalyticsEnabled = false;
   }
 
 // Google Analytics Configuration
@@ -117,6 +130,7 @@
     scriptId: 'ga-analytics-script',
     scriptSrc: 'https://www.googletagmanager.com/gtag/js?id=G-KYDWLJLE7Z'
   };
+
 
   /**
    * Load Google Analytics (GA4)
@@ -155,7 +169,8 @@
     console.log('Google Analytics loaded');
   }
 
-  // Firebase Configuration
+  // NOTE: Firebase config is not a secret, but should be protected from abuse via strict Firestore/Storage rules.
+  // Firebase client-side initialization is only done after consent.
   const FIREBASE_CONFIG = {
     apiKey: "AIzaSyDiT428hi-inMYj879TJfO_ZGe1WlGLb8Y",
     authDomain: "friendsoftut-cc753.firebaseapp.com",
@@ -166,41 +181,43 @@
     measurementId: "G-KYDWLJLE7Z"
   };
 
-/**
-   * Load Firebase Analytics
+  /**
+   * Load Firebase Analytics (safely)
+   * Uses the modular v9+ SDK imports via CDN modules so we don't rely on global `firebase`.
    */
   function loadFirebase() {
-    if (window.firebaseInitialized) {
-      console.log('Firebase already initialized');
-      return;
-    }
+    if (window.firebaseInitialized) return;
+    // Gate: only allow Firebase analytics when consented.
+    if (window._fotFirebaseAnalyticsEnabled === false) return;
 
-    // Load Firebase App + Analytics (combined bundle)
+
+    // Avoid double-load: mark as initializing immediately.
+    window.firebaseInitialized = 'initializing';
+
     const script = document.createElement('script');
-    script.src = 'https://www.gstatic.com/firebasejs/10.8.0/firebase-analytics.js';
-    script.async = true;
+    script.type = 'module';
+    script.textContent = `
+      import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js';
+      import { getAnalytics } from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-analytics.js';
+
+      const app = initializeApp(${JSON.stringify(FIREBASE_CONFIG)});
+      getAnalytics(app);
+      window.firebaseInitialized = true;
+    `;
     document.head.appendChild(script);
 
-    script.onload = function() {
-      // Initialize Firebase
-      if (typeof firebase !== 'undefined') {
-        firebase.initializeApp(FIREBASE_CONFIG);
-        // Initialize Analytics
-        firebase.analytics();
-        window.firebaseInitialized = true;
-        console.log('Firebase Analytics initialized');
-      }
-    };
+    // Fallback: if module import fails, allow site to function.
+    script.addEventListener('error', () => {
+      window.firebaseInitialized = false;
+      console.error('Firebase analytics failed to load');
+    });
   }
-
-  /**
-   * Remove Google Analytics
-   */
 
   /**
    * Create banner HTML
    */
   function createBannerHTML() {
+
     const banner = document.createElement('div');
     banner.id = COOKIE_CONFIG.bannerId;
     banner.setAttribute('role', 'dialog');
@@ -313,9 +330,14 @@
       document.body.appendChild(banner);
       
       // Add event listeners
-      document.getElementById('cookie-accept-all').addEventListener('click', handleAcceptAll);
-      document.getElementById('cookie-accept-selected').addEventListener('click', handleOpenSettings);
-      document.getElementById('cookie-reject-all').addEventListener('click', handleRejectAll);
+      const acceptAllBtn = document.getElementById('cookie-accept-all');
+      const openSettingsBtn = document.getElementById('cookie-accept-selected');
+      const rejectAllBtn = document.getElementById('cookie-reject-all');
+
+      acceptAllBtn && acceptAllBtn.addEventListener('click', handleAcceptAll);
+      openSettingsBtn && openSettingsBtn.addEventListener('click', handleOpenSettings);
+      rejectAllBtn && rejectAllBtn.addEventListener('click', handleRejectAll);
+
     }
     
     // Show banner with animation
@@ -378,6 +400,7 @@
       analytics: true,
       marketing: true
     };
+    window._fotFirebaseAnalyticsEnabled = true;
     saveConsent(consent);
     applyConsent(consent);
     hideBanner();
@@ -387,11 +410,13 @@
    * Handle Reject Non-Essential button
    */
   function handleRejectAll() {
+
     const consent = {
       essential: true,
       analytics: false,
       marketing: false
     };
+    window._fotFirebaseAnalyticsEnabled = false;
     saveConsent(consent);
     applyConsent(consent);
     hideBanner();
@@ -401,6 +426,7 @@
    * Handle Open Settings button
    */
   function handleOpenSettings() {
+
     showSettings();
   }
 
@@ -413,6 +439,8 @@
       analytics: document.getElementById('cookie-category-analytics')?.checked || false,
       marketing: document.getElementById('cookie-category-marketing')?.checked || false
     };
+    window._fotFirebaseAnalyticsEnabled = Boolean(consent && consent.analytics);
+
     saveConsent(consent);
     applyConsent(consent);
     closeSettings();

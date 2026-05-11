@@ -84,7 +84,7 @@
           <div style="display:flex;flex-direction:column;gap:1.5rem">
             <div class="event-card">
               <div class="event-header">
-                <span class="badge" style="background:hsl(var(--primary));color:hsl(var(--primary-foreground))">Fashion</span>
+                <span class="badge" style="background:black;color:hsl(var(--primary-foreground))">Fashion</span>
                 <h3>Campus Style Showcase</h3>
               </div>
               <p style="color:hsl(var(--muted-foreground));font-size:.875rem;margin-bottom:1rem">A fashion showcase featuring student designers and models. Come support local talent and witness the freshest campus style.</p>
@@ -98,7 +98,7 @@
 
             <div class="event-card">
               <div class="event-header">
-                <span class="badge" style="background:hsl(var(--secondary));color:hsl(var(--secondary-foreground))">Workshop</span>
+                <span class="badge" style="background:black;color:white">Workshop</span>
                 <h3>Creator Workshop: Content That Hits</h3>
               </div>
               <p style="color:hsl(var(--muted-foreground));font-size:.875rem;margin-bottom:1rem">Learn how to create viral content, build your brand on social media, and network with other student creators.</p>
@@ -112,7 +112,7 @@
 
             <div class="event-card">
               <div class="event-header">
-                <span class="badge" style="background:hsl(var(--foreground));color:hsl(var(--primary-foreground))">Music</span>
+                <span class="badge" style="background:black;color:hsl(var(--primary-foreground))">Music</span>
                 <h3>Sunset Sessions Vol. 3</h3>
               </div>
               <p style="color:hsl(var(--muted-foreground));font-size:.875rem;margin-bottom:1rem">An outdoor music experience featuring DJs, live performances, food vendors, and good vibes only.</p>
@@ -126,7 +126,7 @@
 
             <div class="event-card">
               <div class="event-header">
-                <span class="badge" style="background:hsl(var(--muted));color:hsl(var(--muted-foreground))">General</span>
+                <span class="badge" style="background:black;color:white">General</span>
                 <h3>Friends of TUT General Meeting</h3>
               </div>
               <p style="color:hsl(var(--muted-foreground));font-size:.875rem;margin-bottom:1rem">Monthly meeting for all members. Discuss upcoming plans, share ideas, and connect with the team.</p>
@@ -175,7 +175,7 @@
           <a href="info.html">Teams</a>
           <a href="terms.html">Terms of Service</a>
           <a href="privacy-policy.html">Privacy Policy</a>
-          <a href="javascript:void(0)" onclick="CookieConsent && CookieConsent.reopenSettings && CookieConsent.reopenSettings()">Cookie Settings</a>
+          <button type="button" class="cookie-settings-btn" aria-label="Open cookie settings" onclick="CookieConsent && CookieConsent.reopenSettings && CookieConsent.reopenSettings()">Cookie Settings</button>
         </div>
       </div>
       <div>
@@ -197,13 +197,33 @@
       </div>
     </div>
     <div class="container footer-bottom">
-      © 2025 - <span id="year"></span> Friends of TUT &amp; KTM TECH. All rights reserved.
+    @<span>2025</span> - <span id="year"></span> Friends of TUT &amp; KTM TECH. All rights reserved.
     </div>
   </footer>
 
 <script src="js/app.min.js"></script>
 <script src="js/cookie-consent.js"></script>
 <script>
+  // Navbar responsiveness (independent fallback)
+  (function () {
+    const mobileToggle = document.getElementById('mobile-toggle');
+    const mobileMenu = document.getElementById('mobile-menu');
+    if (!mobileToggle || !mobileMenu) return;
+
+    mobileMenu.classList.remove('open');
+
+    mobileToggle.addEventListener('click', function (e) {
+      e.preventDefault();
+      mobileMenu.classList.toggle('open');
+    });
+
+    mobileMenu.querySelectorAll('a').forEach(function (a) {
+      a.addEventListener('click', function () {
+        mobileMenu.classList.remove('open');
+      });
+    });
+  })();
+
   var currentYear = new Date().getFullYear();
   var yEl = document.getElementById('year');
   if (yEl) yEl.textContent = currentYear;

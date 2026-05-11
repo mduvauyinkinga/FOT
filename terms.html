@@ -192,7 +192,7 @@
           <a href="info.html">Teams</a>
           <a href="terms.html">Terms of Service</a>
           <a href="privacy-policy.html">Privacy Policy</a>
-          <a href="javascript:void(0)" onclick="CookieConsent && CookieConsent.reopenSettings && CookieConsent.reopenSettings()">Cookie Settings</a>
+          <button type="button" class="cookie-settings-btn" aria-label="Open cookie settings" onclick="CookieConsent && CookieConsent.reopenSettings && CookieConsent.reopenSettings()">Cookie Settings</button>
         </div>
       </div>
       <div>
@@ -214,13 +214,33 @@
       </div>
     </div>
     <div class="container footer-bottom">
-      © 2025 - <span id="year"></span> Friends of TUT &amp; KTM TECH. All rights reserved.
+      @<span>2025</span> - <span id="year"></span> Friends of TUT &amp; KTM TECH. All rights reserved.
     </div>
   </footer>
 
-  <script src="js/app.min.js"></script>
+<script src="js/app.min.js"></script>
   <script src="js/cookie-consent.js"></script>
   <script>
+    // Navbar responsiveness (independent fallback)
+    (function () {
+      const mobileToggle = document.getElementById('mobile-toggle');
+      const mobileMenu = document.getElementById('mobile-menu');
+      if (!mobileToggle || !mobileMenu) return;
+
+      mobileMenu.classList.remove('open');
+
+      mobileToggle.addEventListener('click', function (e) {
+        e.preventDefault();
+        mobileMenu.classList.toggle('open');
+      });
+
+      mobileMenu.querySelectorAll('a').forEach(function (a) {
+        a.addEventListener('click', function () {
+          mobileMenu.classList.remove('open');
+        });
+      });
+    })();
+
     var currentYear = new Date().getFullYear();
     document.getElementById('year').textContent = currentYear;
     document.getElementById('terms-year').textContent = currentYear;
@@ -229,4 +249,6 @@
   </script>
 </body>
 </html>
+
+
 

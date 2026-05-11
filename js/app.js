@@ -1,7 +1,7 @@
 (function () {
   'use strict';
 
-const pages = ['home', 'about', 'events', 'info', 'gallery', 'crew', 'privacy-policy', 'terms'];
+const pages = ['home', 'about', 'events', 'info', 'gallery', 'crew', 'privacy-policy', 'privacy', 'terms'];
 
   // Router
   function navigate() {
@@ -301,27 +301,85 @@ const pages = ['home', 'about', 'events', 'info', 'gallery', 'crew', 'privacy-po
       if (lightboxTitle) lightboxTitle.textContent = title;
       if (lightboxTag) lightboxTag.textContent = category;
 
-      // Clear previous content
-      lightboxMedia.innerHTML = `
-        <div>
-          <span class="tag" id="lightbox-tag"></span>
-          <h2 id="lightbox-title"></h2>
-        </div>
-      `;
+      // Clear previous content (avoid innerHTML injection)
+      while (lightboxMedia.firstChild) {
+        lightboxMedia.removeChild(lightboxMedia.firstChild);
+      }
+
+      // Recreate the lightbox inner structure safely
+      const wrapper = document.createElement('div');
+      const tagSpan = document.createElement('span');
+      tagSpan.className = 'tag';
+      tagSpan.id = 'lightbox-tag';
+
+      const titleH2 = document.createElement('h2');
+      titleH2.id = 'lightbox-title';
+
+      wrapper.appendChild(tagSpan);
+      wrapper.appendChild(titleH2);
+      lightboxMedia.appendChild(wrapper);
+
 
       if (videoSrc && lightboxMedia) {
+        // Create video with best-practice attributes for mobile + GitHub Pages.
         const video = document.createElement('video');
-        video.src = videoSrc;
-        video.poster = 'assets/BTS/Thumbnail-Freshers.png';
+
+        // GitHub Pages-safe asset URL: keep relative assets working across routes.
+        const makeAssetUrl = (rel) => {
+          if (!rel) return '';
+          try {
+            return new URL(rel, window.location.pathname.replace(/\/[^/]*$/, '/') ).toString();
+          } catch (e) {
+            return rel;
+          }
+        };
+
+        const mp4Url = makeAssetUrl(videoSrc);
+        video.poster = makeAssetUrl('assets/BTS/Thumbnail-Freshers.png');
+
+        // Best-practice HTML5 setup
         video.controls = true;
         video.muted = true;
-        video.autoplay = true;
+        video.loop = true;
+        video.playsInline = true;
+
+        // Preload strategy: grab metadata for quick start; let browser decide about full download.
+        video.preload = 'metadata';
+
+        // Use <source> so type is explicit.
+        const source = document.createElement('source');
+        source.src = mp4Url;
+        source.type = 'video/mp4';
+        video.appendChild(source);
+
+        // Styling
         video.style.width = '100%';
         video.style.height = '100%';
         video.style.objectFit = 'cover';
         video.style.borderRadius = '1rem';
+
         lightboxMedia.appendChild(video);
-        video.play().catch(() => {});
+
+        // Start playback if possible (user gesture = click). If blocked, controls allow manual play.
+        const tryPlay = async () => {
+          try {
+            // Ensure attributes are applied before play.
+            video.muted = true;
+            video.playsInline = true;
+            video.loop = true;
+            await video.play();
+          } catch (err) {
+            // Ignore; user can press play.
+          }
+        };
+
+        video.addEventListener('loadedmetadata', () => {
+          tryPlay();
+        }, { once: true });
+
+        // Fallback: attempt play immediately in case metadata fires quickly.
+        tryPlay();
+
       } else if (lightboxMedia && gradient) {
         lightboxMedia.style.background = gradient;
       }
@@ -332,8 +390,16 @@ const pages = ['home', 'about', 'events', 'info', 'gallery', 'crew', 'privacy-po
 
   const lightboxClose = document.getElementById('lightbox-close');
   if (lightboxClose && lightbox) {
-    lightboxClose.addEventListener('click', () => lightbox.classList.remove('open'));
+    lightboxClose.addEventListener('click', () => {
+      lightbox.classList.remove('open');
+    });
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && lightbox.classList.contains('open')) {
+        lightbox.classList.remove('open');
+      }
+    });
     lightbox.addEventListener('click', (e) => {
+
       if (e.target === lightbox) lightbox.classList.remove('open');
     });
   }
