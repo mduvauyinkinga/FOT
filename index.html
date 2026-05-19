@@ -1,8 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
+  <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <!-- Security headers (best-effort for static hosting) -->
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'self'; object-src 'none'; frame-ancestors 'none'; form-action 'self'; img-src 'self' data: https:; font-src 'self' data: https:; style-src 'self' 'unsafe-inline'; script-src 'self' https://www.googletagmanager.com https://www.gstatic.com 'unsafe-inline'; connect-src 'self' https://formspree.io; upgrade-insecure-requests;">
+
   <meta name="robots" content="index, follow" />
   <meta name="author" content="Friends of TUT" />
   <meta name="keywords" content="Friends of TUT, TUT, Tshwane University of Technology, student movement, fashion, media, music, content creation, Pretoria, South Africa, campus culture, student events" />

@@ -3,7 +3,12 @@
 <head>
 <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <!-- Security headers (best-effort for static hosting) -->
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'self'; object-src 'none'; frame-ancestors 'none'; form-action 'self'; img-src 'self' data: https:; font-src 'self' data: https:; style-src 'self' 'unsafe-inline'; script-src 'self' https://www.googletagmanager.com https://www.gstatic.com 'unsafe-inline'; connect-src 'self' https://formspree.io; upgrade-insecure-requests;">
+
   <meta name="robots" content="index, follow" />
+
   <meta name="author" content="Friends of TUT" />
   <meta name="keywords" content="Friends of TUT, TUT, Tshwane University of Technology, student movement, fashion, media, music, content creation, Pretoria, South Africa, campus culture, student events, gallery" />
   
@@ -88,7 +93,7 @@
           </div>
 
           <div class="gallery-grid">
-            <button class="gallery-item" style="background-image: url('assets/BTS/bts1-pic.png'); background-size: cover; background-position: center;" data-title="thumbnail-TEES" data-category="Fashion" data-gradient="linear-gradient(135deg,hsl(0 82% 52%),hsl(0 82% 52% / 0.7))" data-video="assets/BTS/bts-1.mp4">
+            <button class="gallery-item" style="background-image: url('assets/BTS/bts1-pic.png'); background-size: cover; background-position: center;" data-title="thumbnail-TEES" data-category="Fashion" data-gradient="linear-gradient(135deg,hsl(0 82% 52%),hsl(0 82% 52% / 0.7))" src="assets/BTS/bts-1.mp4">
               <div>
                 <span class="tag">Fashion</span>
                 <h3>BEHIND THE SCENES: SHOOT 1</h3>

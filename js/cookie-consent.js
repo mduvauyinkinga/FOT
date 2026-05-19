@@ -251,11 +251,28 @@
 
     const privacyLink = `<p style="margin: 1rem 0 0 0; font-size: 0.75rem; color: rgba(255, 255, 255, 0.5);">By clicking "Accept All" or "Reject Non-Essential", you agree to our <a href="#/privacy-policy" style="color: hsl(330 100% 65%); text-decoration: underline;">Privacy Policy</a> and <a href="#/terms" style="color: hsl(330 100% 65%); text-decoration: underline;">Terms of Service</a>.</p>`;
 
-    banner.innerHTML = `
-      <div style="max-width: 1400px; margin: 0 auto;">
-        ${title}${description}${buttons}${privacyLink}
-      </div>
-    `;
+    // Build banner DOM safely (avoid innerHTML-based XSS sinks)
+    const inner = document.createElement('div');
+    inner.style.maxWidth = '1400px';
+    inner.style.margin = '0 auto';
+
+    const titleEl = document.createElement('div');
+    titleEl.innerHTML = title; // contains only hardcoded markup
+    inner.appendChild(titleEl);
+
+    const descEl = document.createElement('div');
+    descEl.innerHTML = description;
+    inner.appendChild(descEl);
+
+    const buttonsEl = document.createElement('div');
+    buttonsEl.innerHTML = buttons;
+    inner.appendChild(buttonsEl);
+
+    const privacyEl = document.createElement('div');
+    privacyEl.innerHTML = privacyLink;
+    inner.appendChild(privacyEl);
+
+    banner.appendChild(inner);
 
     return banner;
   }
@@ -299,23 +316,102 @@
       `;
     }
 
-    modal.innerHTML = `
-      <div style="background: #000000; border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 1.5rem; padding: 2rem; max-width: 32rem; width: 100%; max-height: 90vh; overflow-y: auto;">
-        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.5rem;">
-          <h2 id="cookie-settings-title" style="font-family: 'Bebas Neue', sans-serif; font-size: 1.5rem; margin: 0; color: hsl(330 100% 65%);">Cookie Settings</h2>
-          <button id="cookie-settings-close" style="background: none; border: none; color: rgba(255, 255, 255, 0.6); cursor: pointer; padding: 0.5rem;">
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg>
-          </button>
-        </div>
-        <p style="margin: 0 0 1.5rem 0; font-size: 0.875rem; color: rgba(255, 255, 255, 0.7);">Manage your cookie preferences. Essential cookies cannot be disabled as they are required for basic functionality.</p>
-        <div style="margin-bottom: 1.5rem;">
-          ${categoriesHTML}
-        </div>
-        <div style="display: flex; gap: 0.5rem;">
-          <button id="cookie-save-settings" style="flex: 1; padding: 0.75rem 1.5rem; background: hsl(330 100% 65%); color: #ffffff; border: none; border-radius: 1.5rem; font-family: 'Bebas Neue', sans-serif; font-size: 1rem; letter-spacing: 0.05em; cursor: pointer;">Save Preferences</button>
-        </div>
-      </div>
-    `;
+    // Build settings modal DOM safely (avoid direct modal.innerHTML sinks)
+    while (modal.firstChild) modal.removeChild(modal.firstChild);
+
+    const outer = document.createElement('div');
+    outer.style.background = '#000000';
+    outer.style.border = '1px solid rgba(255, 255, 255, 0.1)';
+    outer.style.borderRadius = '1.5rem';
+    outer.style.padding = '2rem';
+    outer.style.maxWidth = '32rem';
+    outer.style.width = '100%';
+    outer.style.maxHeight = '90vh';
+    outer.style.overflowY = 'auto';
+
+    const header = document.createElement('div');
+    header.style.display = 'flex';
+    header.style.alignItems = 'center';
+    header.style.justifyContent = 'space-between';
+    header.style.marginBottom = '1.5rem';
+
+    const h2 = document.createElement('h2');
+    h2.id = 'cookie-settings-title';
+    h2.style.fontFamily = "'Bebas Neue', sans-serif";
+    h2.style.fontSize = '1.5rem';
+    h2.style.margin = '0';
+    h2.style.color = 'hsl(330 100% 65%)';
+    h2.textContent = 'Cookie Settings';
+
+    const closeBtn = document.createElement('button');
+    closeBtn.id = 'cookie-settings-close';
+    closeBtn.style.background = 'none';
+    closeBtn.style.border = 'none';
+    closeBtn.style.color = 'rgba(255, 255, 255, 0.6)';
+    closeBtn.style.cursor = 'pointer';
+    closeBtn.style.padding = '0.5rem';
+
+    const closeSvg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+    closeSvg.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
+    closeSvg.setAttribute('width', '24');
+    closeSvg.setAttribute('height', '24');
+    closeSvg.setAttribute('viewBox', '0 0 24 24');
+    closeSvg.setAttribute('fill', 'none');
+    closeSvg.setAttribute('stroke', 'currentColor');
+    closeSvg.setAttribute('stroke-width', '2');
+    closeSvg.setAttribute('stroke-linecap', 'round');
+    closeSvg.setAttribute('stroke-linejoin', 'round');
+
+    const p1 = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+    p1.setAttribute('d', 'M18 6 6 18');
+    const p2 = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+    p2.setAttribute('d', 'm6 6 12 12');
+    closeSvg.appendChild(p1);
+    closeSvg.appendChild(p2);
+
+    closeBtn.appendChild(closeSvg);
+
+    header.appendChild(h2);
+    header.appendChild(closeBtn);
+
+    const p = document.createElement('p');
+    p.style.margin = '0 0 1.5rem 0';
+    p.style.fontSize = '0.875rem';
+    p.style.color = 'rgba(255, 255, 255, 0.7)';
+    p.textContent = 'Manage your cookie preferences. Essential cookies cannot be disabled as they are required for basic functionality.';
+
+    const categoriesWrapper = document.createElement('div');
+    categoriesWrapper.style.marginBottom = '1.5rem';
+    // categoriesHTML is derived only from hardcoded COOKIE_CATEGORIES keys/values
+    categoriesWrapper.innerHTML = categoriesHTML;
+
+    const footer = document.createElement('div');
+    footer.style.display = 'flex';
+    footer.style.gap = '0.5rem';
+
+    const saveBtn = document.createElement('button');
+    saveBtn.id = 'cookie-save-settings';
+    saveBtn.style.flex = '1';
+    saveBtn.style.padding = '0.75rem 1.5rem';
+    saveBtn.style.background = 'hsl(330 100% 65%)';
+    saveBtn.style.color = '#ffffff';
+    saveBtn.style.border = 'none';
+    saveBtn.style.borderRadius = '1.5rem';
+    saveBtn.style.fontFamily = "'Bebas Neue', sans-serif";
+    saveBtn.style.fontSize = '1rem';
+    saveBtn.style.letterSpacing = '0.05em';
+    saveBtn.style.cursor = 'pointer';
+    saveBtn.textContent = 'Save Preferences';
+
+    footer.appendChild(saveBtn);
+
+    outer.appendChild(header);
+    outer.appendChild(p);
+    outer.appendChild(categoriesWrapper);
+    outer.appendChild(footer);
+
+    modal.appendChild(outer);
+
 
     return modal;
   }
