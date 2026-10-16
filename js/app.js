@@ -1,43 +1,32 @@
 (function () {
   'use strict';
 
-const pages = ['home', 'about', 'events', 'info', 'gallery', 'crew', 'privacy-policy', 'privacy', 'terms'];
-
-  // Router
-  function navigate() {
-    const hash = window.location.hash.replace('#/', '').replace('#', '') || 'home';
-    const target = pages.includes(hash) ? hash : 'not-found';
-
-    document.querySelectorAll('.page').forEach((el) => el.classList.remove('active'));
-    const active = document.getElementById('page-' + target);
-    if (active) active.classList.add('active');
-
-    // Update nav active states
+// Nav active state — pathname-based (multi-page site; no hash router).
+  // The old SPA hash router used to strip .page.active on load, which blanked
+  // every page except index (each page's own .page.active in markup is now
+  // the single source of truth for visibility).
+  function updateActiveNav() {
+    const path = window.location.pathname.split('/').pop() || 'index.html';
     document.querySelectorAll('.nav-links a, .mobile-menu a').forEach((a) => {
-      const href = a.getAttribute('href');
-      const page = href ? href.replace('#/', '') : '';
-      if (page === target || (target === 'home' && page === '')) {
-        a.classList.add('active');
-      } else {
-        a.classList.remove('active');
-      }
+      const href = (a.getAttribute('href') || '').split('#')[0];
+      a.classList.toggle('active', href === path);
     });
-
-    // Close mobile menu on nav
-    document.querySelector('.mobile-menu').classList.remove('open');
-
-    window.scrollTo({ top: 0, behavior: 'smooth' });
   }
+  updateActiveNav();
+  window.addEventListener('hashchange', updateActiveNav);
 
-  window.addEventListener('hashchange', navigate);
-  window.addEventListener('load', navigate);
-
-  // Mobile nav toggle
+  // Mobile nav toggle (single implementation — inline copies removed from pages)
   const mobileToggle = document.getElementById('mobile-toggle');
   const mobileMenu = document.getElementById('mobile-menu');
   if (mobileToggle && mobileMenu) {
-    mobileToggle.addEventListener('click', () => {
+    mobileMenu.classList.remove('open');
+    mobileToggle.addEventListener('click', (e) => {
+      e.preventDefault();
       mobileMenu.classList.toggle('open');
+    });
+    // Close the menu when a link inside it is chosen
+    mobileMenu.querySelectorAll('a').forEach((link) => {
+      link.addEventListener('click', () => mobileMenu.classList.remove('open'));
     });
   }
 
@@ -150,6 +139,7 @@ const pages = ['home', 'about', 'events', 'info', 'gallery', 'crew', 'privacy-po
     const nameInput = form.querySelector('#name');
     const emailInput = form.querySelector('#email');
     const messageInput = form.querySelector('#message');
+    const consentInput = form.querySelector('#consent');
 
     const nameError = validateName(nameInput.value);
     const emailError = validateEmail(emailInput.value);
@@ -159,7 +149,18 @@ const pages = ['home', 'about', 'events', 'info', 'gallery', 'crew', 'privacy-po
     setFieldState(emailInput, emailError);
     setFieldState(messageInput, messageError);
 
-    return !nameError && !emailError && !messageError;
+    // POPIA consent checkbox — form uses novalidate, so required alone won't
+    // block submission; enforce it here and surface #consent-error.
+    let consentError = '';
+    if (consentInput) {
+      consentError = consentInput.checked
+        ? ''
+        : 'Please tick the consent box so we can respond to your enquiry (POPIA).';
+      setFieldState(consentInput, consentError);
+      if (!consentInput.checked) consentInput.focus();
+    }
+
+    return !nameError && !emailError && !messageError && !consentError;
   }
 
 // Join form - Send to Formspree
@@ -178,6 +179,11 @@ const pages = ['home', 'about', 'events', 'info', 'gallery', 'crew', 'privacy-po
     if (nameInput) nameInput.addEventListener('blur', handleBlur);
     if (emailInput) emailInput.addEventListener('blur', handleBlur);
     if (messageInput) messageInput.addEventListener('blur', handleBlur);
+    // Clear/show POPIA consent error as soon as the box is toggled
+    const consentBox = joinForm.querySelector('#consent');
+    if (consentBox) {
+      consentBox.addEventListener('change', () => setFieldState(consentBox, consentBox.checked ? '' : 'Please tick the consent box so we can respond to your enquiry (POPIA).'));
+    }
 
     joinForm.addEventListener('submit', async (e) => {
       e.preventDefault();

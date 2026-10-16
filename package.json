@@ -1,0 +1,20 @@
+{
+  "name": "fot-gh-pages",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev": "vite",
+    "build": "npm run build:js && npm run build:css",
+    "build:js": "rolldown js/app.js --file js/app.min.js --minify --platform browser --format iife",
+    "build:css": "node scripts/minify-css.js",
+    "test": "node --check js/app.js && node --check js/app.min.js && node --check js/cookie-consent.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "devDependencies": {
+    "vite": "^8.3.0"
+  }
+}

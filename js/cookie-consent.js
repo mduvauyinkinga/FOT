@@ -249,7 +249,7 @@
       </div>
     `;
 
-    const privacyLink = `<p style="margin: 1rem 0 0 0; font-size: 0.75rem; color: rgba(255, 255, 255, 0.5);">By clicking "Accept All" or "Reject Non-Essential", you agree to our <a href="#/privacy-policy" style="color: hsl(330 100% 65%); text-decoration: underline;">Privacy Policy</a> and <a href="#/terms" style="color: hsl(330 100% 65%); text-decoration: underline;">Terms of Service</a>.</p>`;
+    const privacyLink = `<p style="margin: 1rem 0 0 0; font-size: 0.75rem; color: rgba(255, 255, 255, 0.5);">By clicking "Accept All" or "Reject Non-Essential", you agree to our <a href="privacy-policy.html" style="color: hsl(330 100% 65%); text-decoration: underline;">Privacy Policy</a>, <a href="cookies.html" style="color: hsl(330 100% 65%); text-decoration: underline;">Cookie Policy</a> and <a href="terms.html" style="color: hsl(330 100% 65%); text-decoration: underline;">Terms of Service</a>.</p>`;
 
     // Build banner DOM safely (avoid innerHTML-based XSS sinks)
     const inner = document.createElement('div');
@@ -439,6 +439,9 @@
     // Show banner with animation
     requestAnimationFrame(() => {
       banner.style.transform = 'translateY(0)';
+      // Keyboard/a11y: move focus to the primary action when the banner appears
+      const firstAction = document.getElementById('cookie-accept-all');
+      if (firstAction) firstAction.focus();
     });
   }
 
@@ -475,6 +478,18 @@
     }
     
     modal.style.display = 'flex';
+
+    // Keyboard/a11y: remember opener, focus the dialog, close on ESC
+    cookieModalOpener = document.activeElement;
+    const closeBtn = document.getElementById('cookie-settings-close');
+    if (closeBtn) closeBtn.focus();
+    document.addEventListener('keydown', handleModalKeydown);
+  }
+
+  let cookieModalOpener = null;
+
+  function handleModalKeydown(e) {
+    if (e.key === 'Escape') closeSettings();
   }
 
   /**
@@ -484,6 +499,12 @@
     const modal = document.getElementById(COOKIE_CONFIG.settingsId);
     if (modal) {
       modal.style.display = 'none';
+      document.removeEventListener('keydown', handleModalKeydown);
+      // Return focus to the element that opened the dialog
+      if (cookieModalOpener && typeof cookieModalOpener.focus === 'function') {
+        cookieModalOpener.focus();
+      }
+      cookieModalOpener = null;
     }
   }
 

@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
   <!-- Security headers (best-effort for static hosting) -->
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'self'; object-src 'none'; frame-ancestors 'none'; form-action 'self'; img-src 'self' data: https:; font-src 'self' data: https:; style-src 'self' 'unsafe-inline'; script-src 'self' https://www.googletagmanager.com https://www.gstatic.com 'unsafe-inline'; connect-src 'self' https://formspree.io; upgrade-insecure-requests;">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'self'; object-src 'none'; frame-ancestors 'none'; form-action 'self'; img-src 'self' data: https:; font-src 'self' data: https:; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://fonts.gstatic.com; script-src 'self' https://www.googletagmanager.com https://www.gstatic.com 'unsafe-inline'; connect-src 'self' https://formspree.io https://www.googletagmanager.com https://*.google-analytics.com https://*.analytics.google.com https://firebaselogging.googleapis.com https://firebaseinstallations.googleapis.com; upgrade-insecure-requests;">
 
   <meta name="robots" content="index, follow" />
 
@@ -17,19 +17,19 @@
   <meta name="description" content="Your privacy matters to us. Read how we protect your data." />
 
   <meta property="og:type" content="website" />
-  <meta property="og:url" content="https://mduvauyinkinga.github.io/FOT/privacy-policy.html" />
+  <meta property="og:url" content="https://friendsoftut.co.za/privacy-policy.html" />
   <meta property="og:title" content="Privacy Policy - Friends of TUT" />
   <meta property="og:description" content="Your privacy matters to us. Read how we protect your data." />
-  <meta property="og:image" content="https://mduvauyinkinga.github.io/FOT/assets/logo.jpeg" />
+  <meta property="og:image" content="https://friendsoftut.co.za/assets/logo.jpeg" />
   <meta property="og:site_name" content="Friends of TUT" />
 
   <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:url" content="https://mduvauyinkinga.github.io/FOT/privacy-policy.html" />
+  <meta name="twitter:url" content="https://friendsoftut.co.za/privacy-policy.html" />
   <meta name="twitter:title" content="Privacy Policy - Friends of TUT" />
   <meta name="twitter:description" content="Your privacy matters to us. Read how we protect your data." />
-  <meta name="twitter:image" content="https://mduvauyinkinga.github.io/FOT/assets/logo.jpeg" />
+  <meta name="twitter:image" content="https://friendsoftut.co.za/assets/logo.jpeg" />
 
-  <link rel="canonical" href="https://mduvauyinkinga.github.io/FOT/privacy-policy.html" />
+  <link rel="canonical" href="https://friendsoftut.co.za/privacy-policy.html" />
 
   <script>
     if (window.location.protocol === 'http:') {
@@ -37,6 +37,8 @@
     }
   </script>
 <link rel="icon" href="assets/logo.jpeg" type="image/jpeg" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link rel="stylesheet" href="css/styles.min.css" />
 </head>
 <body class="min-h-screen flex flex-col">
@@ -216,6 +218,7 @@
           <a href="info.html">Teams</a>
           <a href="terms.html">Terms of Service</a>
           <a href="privacy-policy.html">Privacy Policy</a>
+          <a href="cookies.html">Cookie Policy</a>
           <button type="button" class="cookie-settings-btn" aria-label="Open cookie settings" onclick="CookieConsent && CookieConsent.reopenSettings && CookieConsent.reopenSettings()">Cookie Settings</button>
         </div>
       </div>
@@ -226,7 +229,7 @@
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="20" x="2" y="2" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg>
             @friends_of.tut
           </a>
-          <a href="friendsoftut@gmail.com" class="flex items-center gap-2">
+          <a href="mailto:friendsoftut@gmail.com" class="flex items-center gap-2">
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m22 7-8.991 5.727a2 2 0 0 1-2.009 0L2 7"></path><rect width="20" height="16" x="2" y="4" rx="2"></rect></svg>
             friendsoftut@gmail.com
           </a>
@@ -238,32 +241,13 @@
       </div>
     </div>
     <div class="container footer-bottom">
-    @<span>2025</span> - <span id="year"></span> Friends of TUT &amp; KTM TECH. All rights reserved.
+    &copy; <span>2025</span> - <span id="year"></span> Friends of TUT &amp; KTM TECH. All rights reserved.
     </div>
   </footer>
 
   <script src="js/app.min.js"></script>
   <script src="js/cookie-consent.js"></script>
   <script>
-    // Navbar responsiveness (independent fallback)
-    (function () {
-      const mobileToggle = document.getElementById('mobile-toggle');
-      const mobileMenu = document.getElementById('mobile-menu');
-      if (!mobileToggle || !mobileMenu) return;
-
-      mobileMenu.classList.remove('open');
-
-      mobileToggle.addEventListener('click', function (e) {
-        e.preventDefault();
-        mobileMenu.classList.toggle('open');
-      });
-
-      mobileMenu.querySelectorAll('a').forEach(function (a) {
-        a.addEventListener('click', function () {
-          mobileMenu.classList.remove('open');
-        });
-      });
-    })();
 
     var currentYear = new Date().getFullYear();
     document.getElementById('year').textContent = currentYear;
